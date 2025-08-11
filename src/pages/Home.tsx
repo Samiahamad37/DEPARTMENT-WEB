@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin } from "lucide-react";
@@ -43,13 +42,12 @@ const filterByDateDesc = (
 
 const EventDescription = ({ event }: { event: EventItem | NewsItem }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const shortLength = 100; // Number of characters to show in short version
+  const shortLength = 100;
 
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
   };
 
-  // Ensure description is a string and handle potential null/undefined
   const description = event.description || '';
   const displayText = isExpanded 
     ? description 
@@ -82,7 +80,6 @@ const Home = () => {
   const [eventStatus, setEventStatus] = useState<"All" | "Ongoing" | "Completed" | "Upcoming">("All");
   const [newsStatus, setNewsStatus] = useState<"All" | "Latest" | "Archived">("All");
 
-  // Fetch data
   useEffect(() => {
     fetch("http://localhost:8001/api/announcements/")
       .then((res) => res.json())
@@ -101,7 +98,6 @@ const Home = () => {
             status: postedDate >= oneWeekAgo ? "Latest" : "Archived",
           };
         });
-        console.log("Fetched news:", normalizedNews);
         setNews(normalizedNews);
       })
       .catch((err) => console.error("Failed to fetch news:", err));
@@ -113,7 +109,6 @@ const Home = () => {
           ...event,
           status: event.status ? event.status.charAt(0).toUpperCase() + event.status.slice(1).toLowerCase() : "Upcoming",
         }));
-        console.log("Fetched events:", normalizedEvents);
         setEvents(normalizedEvents);
       })
       .catch((err) => console.error("Failed to fetch events:", err));
@@ -130,9 +125,7 @@ const Home = () => {
         event.status.toLowerCase() === eventStatus.toLowerCase()
       );
     }
-    const sortedEvents = filtered.sort(filterByDateDesc).slice(0, 3);
-    console.log("Filtered events:", sortedEvents);
-    return sortedEvents;
+    return filtered.sort(filterByDateDesc).slice(0, 3);
   }, [events, eventStatus]);
 
   const filteredNews = useMemo(() => {
@@ -142,9 +135,7 @@ const Home = () => {
         (item as any).status?.toLowerCase() === newsStatus.toLowerCase()
       );
     }
-    const sortedNews = filtered.sort(filterByDateDesc).slice(0, 3);
-    console.log("Filtered news:", sortedNews);
-    return sortedNews;
+    return filtered.sort(filterByDateDesc).slice(0, 3);
   }, [news, newsStatus]);
 
   const slideLeft = () => {
@@ -176,7 +167,7 @@ const Home = () => {
       <section className="max-w-5xl mx-auto px-4 py-12 text-center">
         <h2 className="text-2xl font-bold text-blue-900 mb-4">Announcements</h2>
         <div className="relative flex flex-col items-center overflow-hidden">
-          <div className="flex items-center justify-center w-full">
+          <div className="flex items-center justify-center w-full max-w-full overflow-x-auto">
             <button
               onClick={slideLeft}
               className="bg-gray-200 text-blue-900 px-2 py-1 rounded hover:bg-gray-300 z-10"
@@ -184,13 +175,13 @@ const Home = () => {
             >
               &lt;
             </button>
-            <div className="flex justify-center w-[724px]">
+            <div className="flex justify-center w-full md:w-[724px]">
               {recentAnnouncements.length > 0 ? (
                 recentAnnouncements.map((item, idx) =>
                   idx === -translateX / 724 ? (
                     <div
                       key={item.id}
-                      className="relative w-[724px] mx-auto bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden p-6 flex flex-col items-start border border-gray-200"
+                      className="relative w-full md:w-[724px] mx-auto bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden p-6 flex flex-col items-start border border-gray-200"
                     >
                       {idx === 0 && (
                         <img src={lightArrow} alt="New" className="w-8 h-8 " />
@@ -227,12 +218,6 @@ const Home = () => {
             </button>
           </div>
         </div>
-        {/* <button
-          className="bg-gray-200 text-blue-900 px-4 py-2 rounded hover:bg-gray-300 mt-6"
-          onClick={() => (window.location.href = "news/")}
-        >
-          Read More
-        </button> */}
       </section>
 
       {/* Events Section */}
