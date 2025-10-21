@@ -107,7 +107,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CSM_db',
         'USER': 'postgres',
-        'PASSWORD': 'password',
+        'PASSWORD': 'shadrackhosea',
         'HOST': 'localhost',
         'PORT': '5432',
     }
