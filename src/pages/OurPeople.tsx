@@ -331,3 +331,4 @@ const OurPeople: React.FC = () => {
 };
 
 export default OurPeople;
+
