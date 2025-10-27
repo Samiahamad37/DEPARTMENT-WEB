@@ -1,193 +1,227 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
-
-interface BannerSlide {
-  id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  backgroundImage: string;
-  ctaText: string;
-  ctaLink: string;
-  isActive: boolean;
-}
+import { ArrowRight, Award, Users, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useBanners } from '../hooks/useBanners';
+import { Banner } from '../types/api';
 
 const Hero: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  // Fetch banners from API
+  const { data: banners = [], isLoading, error } = useBanners();
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
-  // Static banner data - will be replaced with API data later
-  const bannerSlides: BannerSlide[] = [
+  // Fallback static banners if API fails
+  const fallbackBanners: Banner[] = [
     {
       id: 1,
-      title: "Welcome Message from the Head of Department",
-      subtitle: "Dr. Maria Santos, Head of CSM Department",
-      description: "Welcome to the Department of Computer Systems and Mathematics at Ardhi University. We are committed to providing world-class education and fostering innovation in technology and mathematics. Join us in shaping the future of computing and digital transformation.",
-      backgroundImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80",
-      ctaText: "Meet Our Team",
-      ctaLink: "/about/people",
-      isActive: true
+      title: "Computer Systems & Mathematics",
+      subtitle: "Ardhi University",
+      description: "Empowering innovation through cutting-edge technology, mathematical excellence, and collaborative research for tomorrow's digital world.",
+      background_image: "https://images.pexels.com/photos/159306/network-cable-ethernet-computer-159306.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      cta_text: "Explore Programs",
+      cta_link: "/programmes",
+      is_active: true,
+      display_order: 1,
+      created_at: "2024-01-01T00:00:00Z",
+      show_highlights: true,
+      highlight_1_text: "Excellence in Education",
+      highlight_2_text: "Industry Partnerships",
+      highlight_3_text: "Research Impact",
+      overlay_opacity: 0.4
     },
     {
       id: 2,
-      title: "New Programme Launch",
-      subtitle: "Bachelor of Data Science and Artificial Intelligence",
-      description: "Join our groundbreaking new program combining data science and AI to prepare for the future of technology and innovation.",
-      backgroundImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-      ctaText: "Learn More",
-      ctaLink: "/programmes",
-      isActive: true
+      title: "Research Excellence",
+      subtitle: "Innovation Hub",
+      description: "Leading research in artificial intelligence, data science, and emerging technologies that shape the future.",
+      background_image: "https://images.pexels.com/photos/3862130/3862130.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      cta_text: "View Research",
+      cta_link: "/research",
+      is_active: true,
+      display_order: 2,
+      created_at: "2024-01-01T00:00:00Z",
+      show_highlights: false,
+      highlight_1_text: "",
+      highlight_2_text: "",
+      highlight_3_text: "",
+      overlay_opacity: 0.6
     },
     {
       id: 3,
-      title: "Modern AI Infrastructure",
-      subtitle: "Powerful AI Server Access",
-      description: "Access state-of-the-art AI servers and computational resources for cutting-edge research and development projects.",
-      backgroundImage: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=2025&q=80",
-      ctaText: "View Facilities",
-      ctaLink: "/facilities",
-      isActive: true
-    },
-    {
-      id: 4,
-      title: "Ardhi University Celebrates",
-      subtitle: "23 Years of Excellence",
-      description: "Join us in celebrating 23 years of academic excellence, innovation, and contribution to Tanzania's technological advancement.",
-      backgroundImage: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-      ctaText: "Our Story",
-      ctaLink: "/about/department",
-      isActive: true
-    },
-    {
-      id: 5,
-      title: "Hire Our Students",
-      subtitle: "Talented Graduates Ready for Industry",
-      description: "Connect with our highly skilled graduates who are ready to contribute to your organization's success with cutting-edge knowledge and skills.",
-      backgroundImage: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2084&q=80",
-      ctaText: "Partner With Us",
-      ctaLink: "/about/hire-students",
-      isActive: true
+      title: "Student Success",
+      subtitle: "Future Leaders",
+      description: "Preparing the next generation of computer scientists and mathematicians for global challenges and opportunities.",
+      background_image: "https://images.pexels.com/photos/3184465/3184465.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      cta_text: "Meet Our Students",
+      cta_link: "/about/people",
+      is_active: true,
+      display_order: 3,
+      created_at: "2024-01-01T00:00:00Z",
+      show_highlights: true,
+      highlight_1_text: "Student Achievement",
+      highlight_2_text: "Career Success",
+      highlight_3_text: "Global Impact",
+      overlay_opacity: 0.3
     }
   ];
 
-  // Auto-play functionality
+  // Use API data or fallback to static data
+  const bannerData = banners.length > 0 ? banners : fallbackBanners;
+  const currentBanner = bannerData[currentBannerIndex];
+
+  // Auto-scroll functionality
   useEffect(() => {
-    if (!isAutoPlay) return;
+    if (bannerData.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
-    }, 5000); // Change slide every 5 seconds
+      setCurrentBannerIndex((prevIndex) => 
+        prevIndex === bannerData.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change banner every 5 seconds
 
     return () => clearInterval(interval);
-  }, [isAutoPlay, bannerSlides.length]);
+  }, [bannerData.length]);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+  const goToPrevious = () => {
+    setCurrentBannerIndex((prevIndex) => 
+      prevIndex === 0 ? bannerData.length - 1 : prevIndex - 1
+    );
   };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+  const goToNext = () => {
+    setCurrentBannerIndex((prevIndex) => 
+      prevIndex === bannerData.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
+  const goToBanner = (index: number) => {
+    setCurrentBannerIndex(index);
   };
 
-  const toggleAutoPlay = () => {
-    setIsAutoPlay(!isAutoPlay);
-  };
-
-  return (
-    <section className="relative h-screen overflow-hidden">
-      {/* Background Slides */}
-      <div className="absolute inset-0">
-        {bannerSlides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${slide.backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex items-center justify-center h-full">
-        <div className="text-center text-white px-4 max-w-4xl mx-auto">
-          <div className="transform transition-all duration-1000 ease-in-out">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              {bannerSlides[currentSlide].title}
-            </h1>
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-light mb-8 text-blue-200">
-              {bannerSlides[currentSlide].subtitle}
-            </h2>
-            <p className="text-lg md:text-xl mb-12 max-w-3xl mx-auto leading-relaxed">
-              {bannerSlides[currentSlide].description}
-            </p>
-            <Link
-              to={bannerSlides[currentSlide].ctaLink}
-              className="inline-flex items-center bg-orange-600 hover:bg-orange-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              {bannerSlides[currentSlide].ctaText}
-            </Link>
+  if (isLoading) {
+    return (
+      <div className="relative bg-gradient-to-br from-blue-900 to-blue-800 min-h-screen flex items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white text-center">
+          <div className="animate-pulse">
+            <div className="h-16 bg-blue-700 rounded mb-4"></div>
+            <div className="h-8 bg-blue-600 rounded mb-8"></div>
+            <div className="h-6 bg-blue-500 rounded mb-8"></div>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Navigation Controls */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
-        {/* Play/Pause Button */}
-        <button
-          onClick={toggleAutoPlay}
-          className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm"
-        >
-          {isAutoPlay ? <Pause size={20} /> : <Play size={20} />}
-        </button>
+  if (error) {
+    console.error('Error loading banners:', error);
+  }
 
-        {/* Slide Indicators */}
-        <div className="flex space-x-2">
-          {bannerSlides.map((_, index) => (
+  return (
+    <div className="relative bg-gradient-to-br from-blue-900 to-blue-800 min-h-screen flex items-center overflow-hidden">
+      {/* Background Image Overlay with configurable opacity */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out"
+        style={{
+          backgroundImage: `url("${currentBanner.background_image}")`,
+          opacity: currentBanner.overlay_opacity || 0.4
+        }}
+      />
+      
+      {/* Navigation Arrows */}
+      {bannerData.length > 1 && (
+        <>
+          <button
+            onClick={goToPrevious}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
+            aria-label="Previous banner"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={goToNext}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
+            aria-label="Next banner"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </>
+      )}
+      
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+          <div className="mb-8 lg:mb-0">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 animate-fade-in">
+              {currentBanner.title}
+            </h1>
+            <p className="text-xl md:text-2xl mb-4 text-blue-100 animate-fade-in-delay-1">
+              {currentBanner.subtitle}
+            </p>
+            <p className="text-lg md:text-xl mb-8 text-blue-200 leading-relaxed animate-fade-in-delay-2">
+              {currentBanner.description}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-delay-3">
+              <a 
+                href={currentBanner.cta_link || "/programmes"}
+                className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
+              >
+                {currentBanner.cta_text || "Explore Programs"}
+                <ArrowRight size={20} className="ml-2" />
+              </a>
+              <a 
+                href="/research"
+                className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
+              >
+                Research Areas
+              </a>
+            </div>
+          </div>
+
+          {/* Configurable Highlights */}
+          {currentBanner.show_highlights && (
+            <div className="grid grid-cols-1 gap-6">
+              {currentBanner.highlight_1_text && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors duration-200">
+                  <Award className="text-orange-600 mb-4" size={48} />
+                  <h3 className="text-xl font-semibold mb-2">{currentBanner.highlight_1_text}</h3>
+                  <p className="text-blue-200">Recognized programs in computer systems and mathematical sciences</p>
+                </div>
+              )}
+              {currentBanner.highlight_2_text && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors duration-200">
+                  <Users className="text-green-400 mb-4" size={48} />
+                  <h3 className="text-xl font-semibold mb-2">{currentBanner.highlight_2_text}</h3>
+                  <p className="text-blue-200">Strong collaborations with leading technology companies</p>
+                </div>
+              )}
+              {currentBanner.highlight_3_text && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors duration-200">
+                  <BookOpen className="text-orange-600 mb-4" size={48} />
+                  <h3 className="text-xl font-semibold mb-2">{currentBanner.highlight_3_text}</h3>
+                  <p className="text-blue-200">Published research contributing to global knowledge</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Banner Indicators */}
+      {bannerData.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+          {bannerData.map((_, index) => (
             <button
               key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'bg-orange-600 scale-125'
-                  : 'bg-white/50 hover:bg-white/70'
+              onClick={() => goToBanner(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                index === currentBannerIndex 
+                  ? 'bg-white' 
+                  : 'bg-white/50 hover:bg-white/75'
               }`}
+              aria-label={`Go to banner ${index + 1}`}
             />
           ))}
         </div>
-      </div>
-
-      {/* Arrow Navigation */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm"
-      >
-        <ChevronLeft size={24} />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm"
-      >
-        <ChevronRight size={24} />
-      </button>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div>
-        </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
 };
 

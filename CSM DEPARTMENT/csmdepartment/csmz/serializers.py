@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import (
     Banner, Team, Announcement, Project, ContactMessage, Event, News,
-    Partner, Programme, ResearchArea, Facility, OutreachInitiative
+    Partner, Programme, ResearchArea, Facility, OutreachInitiative,
+    DepartmentInfo, ContactInfo, SocialMedia, DepartmentMilestone,
+    DepartmentAchievement, NewsletterSubscription
 )
 
 class BannerSerializer(serializers.ModelSerializer):
@@ -86,4 +88,38 @@ class OutreachInitiativeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = OutreachInitiative
+        fields = '__all__'
+
+class DepartmentInfoSerializer(serializers.ModelSerializer):
+    head_photo = serializers.ImageField(use_url=True)
+    logo = serializers.ImageField(use_url=True)
+    values_list = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = DepartmentInfo
+        fields = '__all__'
+
+class ContactInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInfo
+        fields = '__all__'
+
+class SocialMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialMedia
+        fields = '__all__'
+
+class DepartmentMilestoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DepartmentMilestone
+        fields = '__all__'
+
+class DepartmentAchievementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DepartmentAchievement
+        fields = '__all__'
+
+class NewsletterSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsletterSubscription
         fields = '__all__'

@@ -15,6 +15,13 @@ class Banner(models.Model):
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # New configurable highlight fields
+    show_highlights = models.BooleanField(default=False)
+    highlight_1_text = models.CharField(max_length=100, blank=True, default="Excellence in Education")
+    highlight_2_text = models.CharField(max_length=100, blank=True, default="Industry Partnerships")
+    highlight_3_text = models.CharField(max_length=100, blank=True, default="Research Impact")
+    overlay_opacity = models.FloatField(default=0.4, help_text="Overlay opacity from 0.0 to 1.0")
 
     class Meta:
         ordering = ['display_order', '-created_at']
@@ -46,8 +53,12 @@ class Event(models.Model):
 class Team(models.Model):
     ROLE_CHOICES = [
         ('head', 'Head of Department'),
+        ('professor', 'Professor'),
+        ('associate_professor', 'Associate Professor'),
+        ('senior_lecturer', 'Senior Lecturer'),
         ('lecturer', 'Lecturer'),
         ('assistant_lecturer', 'Assistant Lecturer'),
+        ('tutorial_assistant', 'Tutorial Assistant'),
         ('admin', 'Administrative Staff'),
         ('technical', 'Technical Staff'),
     ]
@@ -61,7 +72,13 @@ class Team(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     office_location = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
+    is_on_study_leave = models.BooleanField(default=False)
     display_order = models.PositiveIntegerField(default=0)
+    title = models.CharField(max_length=200, blank=True, help_text="Official title or designation")
+    education = models.TextField(blank=True, help_text="Educational background (JSON format)")
+    research_areas = models.TextField(blank=True, help_text="Research areas (JSON format)")
+    publications_count = models.PositiveIntegerField(default=0)
+    awards = models.TextField(blank=True, help_text="Awards and recognitions (JSON format)")
 
     class Meta:
         ordering = ['display_order', 'name']
@@ -157,7 +174,6 @@ class News(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField()
-    content = models.TextField(blank=True, help_text="Full article content")
     image = models.ImageField(upload_to='news_images/')
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='general')
     author = models.CharField(max_length=100, blank=True)
@@ -233,7 +249,7 @@ class ResearchArea(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     image = models.ImageField(upload_to='research_areas/', blank=True)
-    key_faculty = models.ManyToManyField(Team, blank=True, related_name='research_areas')
+    key_faculty = models.ManyToManyField(Team, blank=True, related_name='research_area_memberships')
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveIntegerField(default=0)
 
@@ -278,3 +294,136 @@ class OutreachInitiative(models.Model):
 
     def __str__(self):
         return self.title
+
+class DepartmentInfo(models.Model):
+    """Model for managing department information and settings"""
+    name = models.CharField(max_length=200, default="Computer Systems & Mathematics")
+    university = models.CharField(max_length=200, default="Ardhi University")
+    description = models.TextField(blank=True)
+    vision = models.TextField(blank=True)
+    mission = models.TextField(blank=True)
+    values = models.TextField(blank=True, help_text="JSON array of values")
+    head_message = models.TextField(blank=True)
+    head_name = models.CharField(max_length=100, blank=True)
+    head_title = models.CharField(max_length=100, blank=True)
+    head_photo = models.ImageField(upload_to='department/', blank=True)
+    logo = models.ImageField(upload_to='department/', blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Department Information"
+        verbose_name_plural = "Department Information"
+
+    def __str__(self):
+        return f"{self.name} - {self.university}"
+
+    @property
+    def values_list(self):
+        """Return values as a list"""
+        import json
+        try:
+            return json.loads(self.values) if self.values else []
+        except:
+            return []
+
+class ContactInfo(models.Model):
+    """Model for managing contact information"""
+    address = models.TextField()
+    phone = models.CharField(max_length=50)
+    email = models.EmailField()
+    office_hours = models.CharField(max_length=100, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Contact Information"
+        verbose_name_plural = "Contact Information"
+
+    def __str__(self):
+        return f"Contact Info - {self.email}"
+
+class SocialMedia(models.Model):
+    """Model for managing social media links"""
+    PLATFORM_CHOICES = [
+        ('facebook', 'Facebook'),
+        ('twitter', 'Twitter'),
+        ('linkedin', 'LinkedIn'),
+        ('instagram', 'Instagram'),
+        ('youtube', 'YouTube'),
+        ('website', 'Website'),
+    ]
+
+    platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
+    url = models.URLField()
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['display_order', 'platform']
+        verbose_name = "Social Media Link"
+        verbose_name_plural = "Social Media Links"
+
+    def __str__(self):
+        return f"{self.get_platform_display()} - {self.url}"
+
+class DepartmentMilestone(models.Model):
+    """Model for managing department milestones and achievements"""
+    year = models.CharField(max_length=10)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['display_order', 'year']
+
+    def __str__(self):
+        return f"{self.year} - {self.title}"
+
+class DepartmentAchievement(models.Model):
+    """Model for managing department achievements and statistics"""
+    icon_name = models.CharField(max_length=50, help_text="Lucide icon name")
+    number = models.CharField(max_length=20)
+    label = models.CharField(max_length=100)
+    description = models.TextField()
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['display_order']
+
+    def __str__(self):
+        return f"{self.number} {self.label}"
+
+class NewsletterSubscription(models.Model):
+    """Model for managing newsletter subscriptions"""
+    email = models.EmailField(unique=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-subscribed_at']
+
+    def __str__(self):
+        return self.email
+
+class AdminUser(models.Model):
+    """Extended user model for admin functionality"""
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='admin_profile')
+    must_change_password = models.BooleanField(default=True)
+    last_password_change = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='created_admin_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Admin User"
+        verbose_name_plural = "Admin Users"
+
+    def __str__(self):
+        return f"{self.user.username} - Admin"
+
+    def save(self, *args, **kwargs):
+        # If this is a new admin user, set must_change_password to True
+        if not self.pk:
+            self.must_change_password = True
+        super().save(*args, **kwargs)

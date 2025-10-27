@@ -1,68 +1,30 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, Users, Clock, Award, Globe, ChevronDown, ChevronUp, CheckCircle, Star, ExternalLink } from 'lucide-react';
-
-interface Program {
-  id: number;
-  title: string;
-  level: 'undergraduate' | 'graduate' | 'certificate';
-  duration: string;
-  credits: number;
-  description: string;
-  curriculum: string[];
-  careerPaths: string[];
-  requirements: string[];
-  tuition: string;
-  isPopular: boolean;
-  image: string;
-}
+import { useProgrammes } from '../hooks/useProgrammes';
+import { Programme } from '../types/api';
 
 const Programs: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [expandedProgram, setExpandedProgram] = useState<number | null>(null);
 
-  // Static programs data - will be replaced with API data later
-  const programs: Program[] = [
+  // Fetch programmes from API
+  const { data: programmes = [], isLoading, error } = useProgrammes();
+
+  // Fallback static programs data if API fails
+  const fallbackPrograms: Programme[] = [
     {
       id: 1,
       title: "Bachelor of Computer Science",
-      level: "undergraduate",
-      duration: "4 Years",
-      credits: 144,
+      degree_type: "bachelor",
       description: "A comprehensive program covering fundamental computer science concepts, programming, algorithms, data structures, and software engineering. Students gain hands-on experience with modern technologies and industry practices.",
-      curriculum: [
-        "Introduction to Programming (Java, Python)",
-        "Data Structures and Algorithms",
-        "Database Systems",
-        "Software Engineering",
-        "Computer Networks",
-        "Operating Systems",
-        "Web Development",
-        "Mobile Application Development",
-        "Artificial Intelligence",
-        "Cybersecurity Fundamentals",
-        "Software Project Management",
-        "Final Year Project"
-      ],
-      careerPaths: [
-        "Software Developer",
-        "Web Developer",
-        "Mobile App Developer",
-        "Database Administrator",
-        "System Analyst",
-        "IT Consultant",
-        "Software Engineer",
-        "Technical Lead"
-      ],
-      requirements: [
-        "Advanced Level Certificate with Mathematics",
-        "Minimum 2 principal passes",
-        "English proficiency",
-        "Basic computer literacy"
-      ],
-      tuition: "TZS 2,500,000 per year",
-      isPopular: true,
-      image: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+      detailed_description: "This program provides students with a solid foundation in computer science theory and practice, preparing them for careers in software development, system administration, and technology consulting.",
+      duration: "4 Years",
+      requirements: "Advanced Level Certificate with Mathematics, Minimum 2 principal passes, English proficiency, Basic computer literacy",
+      career_prospects: "Software Developer, Web Developer, Mobile App Developer, Database Administrator, System Analyst, IT Consultant, Software Engineer, Technical Lead",
+      image: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      is_active: true,
+      display_order: 1
     },
     {
       id: 2,
@@ -275,25 +237,51 @@ const Programs: React.FC = () => {
     }
   ];
 
+  // Use API data or fallback to static data
+  const programData = programmes.length > 0 ? programmes : fallbackPrograms;
+
   const levelCategories = [
     { value: 'All', label: 'All Programs' },
-    { value: 'undergraduate', label: 'Undergraduate' },
-    { value: 'graduate', label: 'Graduate' },
-    { value: 'certificate', label: 'Certificates' }
+    { value: 'bachelor', label: 'Bachelor' },
+    { value: 'master', label: 'Master' },
+    { value: 'phd', label: 'PhD' },
+    { value: 'diploma', label: 'Diploma' },
+    { value: 'certificate', label: 'Certificate' }
   ];
 
   const filteredPrograms = selectedLevel === 'All' 
-    ? programs 
-    : programs.filter(program => program.level === selectedLevel);
+    ? programData 
+    : programData.filter(program => program.degree_type === selectedLevel);
 
-  const getLevelColor = (level: string) => {
+  const getLevelColor = (degreeType: string) => {
     const colors: { [key: string]: string } = {
-      'undergraduate': 'bg-blue-100 text-blue-800',
-      'graduate': 'bg-orange-100 text-orange-800',
-      'certificate': 'bg-green-100 text-green-800'
+      'bachelor': 'bg-blue-100 text-blue-800',
+      'master': 'bg-orange-100 text-orange-800',
+      'phd': 'bg-purple-100 text-purple-800',
+      'diploma': 'bg-green-100 text-green-800',
+      'certificate': 'bg-yellow-100 text-yellow-800'
     };
-    return colors[level] || 'bg-gray-100 text-gray-800';
+    return colors[degreeType] || 'bg-gray-100 text-gray-800';
   };
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading programmes...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle error
+  if (error) {
+    console.error('Error loading programmes:', error);
+  }
 
   const toggleProgram = (programId: number) => {
     setExpandedProgram(expandedProgram === programId ? null : programId);
@@ -356,18 +344,10 @@ const Programs: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   <div className="absolute top-4 left-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getLevelColor(program.level)}`}>
-                      {levelCategories.find(cat => cat.value === program.level)?.label}
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getLevelColor(program.degree_type)}`}>
+                      {levelCategories.find(cat => cat.value === program.degree_type)?.label}
                     </span>
                   </div>
-                  {program.isPopular && (
-                    <div className="absolute top-4 right-4">
-                      <div className="bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center">
-                        <Star size={14} className="mr-1" />
-                        Popular
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Program Info */}
@@ -376,22 +356,10 @@ const Programs: React.FC = () => {
                   <p className="text-gray-600 mb-6 line-clamp-3">{program.description}</p>
                   
                   {/* Program Details */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-1 gap-4 mb-6">
                     <div className="text-center">
                       <div className="text-lg font-bold text-orange-600">{program.duration}</div>
                       <div className="text-sm text-gray-600">Duration</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-orange-600">{program.credits}</div>
-                      <div className="text-sm text-gray-600">Credits</div>
-                    </div>
-                  </div>
-
-                  {/* Tuition */}
-                  <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-blue-900">{program.tuition}</div>
-                      <div className="text-sm text-blue-700">Annual Tuition</div>
                     </div>
                   </div>
 
@@ -416,64 +384,63 @@ const Programs: React.FC = () => {
                   {/* Expanded Content */}
                   {expandedProgram === program.id && (
                     <div className="mt-6 space-y-6 border-t pt-6">
-                      {/* Curriculum */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                          <BookOpen size={18} className="mr-2 text-orange-600" />
-                          Curriculum Highlights
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {program.curriculum.slice(0, 8).map((course, idx) => (
-                            <div key={idx} className="flex items-start">
-                              <CheckCircle size={16} className="text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">{course}</span>
-                            </div>
-                          ))}
-                          {program.curriculum.length > 8 && (
-                            <div className="col-span-2 text-sm text-gray-500">
-                              +{program.curriculum.length - 8} more courses
-                            </div>
-                          )}
+                      {/* Detailed Description */}
+                      {program.detailed_description && (
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                            <BookOpen size={18} className="mr-2 text-orange-600" />
+                            Program Overview
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed">
+                            {program.detailed_description}
+                          </p>
                         </div>
-                      </div>
+                      )}
 
-                      {/* Career Paths */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Career Opportunities</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {program.careerPaths.slice(0, 6).map((career, idx) => (
-                            <span key={idx} className="px-3 py-1 bg-orange-100 text-orange-800 text-sm rounded-full">
-                              {career}
-                            </span>
-                          ))}
-                          {program.careerPaths.length > 6 && (
-                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
-                              +{program.careerPaths.length - 6} more
-                            </span>
-                          )}
+                      {/* Career Prospects */}
+                      {program.career_prospects && (
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-900 mb-3">Career Opportunities</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {program.career_prospects.split(',').slice(0, 6).map((career, idx) => (
+                              <span key={idx} className="px-3 py-1 bg-orange-100 text-orange-800 text-sm rounded-full">
+                                {career.trim()}
+                              </span>
+                            ))}
+                            {program.career_prospects.split(',').length > 6 && (
+                              <span className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
+                                +{program.career_prospects.split(',').length - 6} more
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Requirements */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Entry Requirements</h4>
-                        <ul className="space-y-2">
-                          {program.requirements.map((req, idx) => (
-                            <li key={idx} className="flex items-start">
-                              <ArrowRight size={16} className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">{req}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      {program.requirements && (
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-900 mb-3">Entry Requirements</h4>
+                          <ul className="space-y-2">
+                            {program.requirements.split(',').map((req, idx) => (
+                              <li key={idx} className="flex items-start">
+                                <ArrowRight size={16} className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                                <span className="text-sm text-gray-700">{req.trim()}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {/* Action Buttons */}
                   <div className="flex gap-3 mt-6">
-                    <button className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105">
+                    <Link
+                      to="/prospective-student"
+                      className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 text-center"
+                    >
                       Apply Now
-                    </button>
+                    </Link>
                     <button className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300">
                       <ExternalLink size={20} />
                     </button>
@@ -537,9 +504,12 @@ const Programs: React.FC = () => {
             Take the first step towards your future in computer science and mathematics.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-300 transform hover:scale-105">
+            <Link
+              to="/prospective-student"
+              className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-300 transform hover:scale-105 inline-block"
+            >
               Apply Now
-            </button>
+            </Link>
             <Link 
               to="/contact" 
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-300 inline-block transform hover:scale-105"

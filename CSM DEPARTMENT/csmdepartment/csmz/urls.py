@@ -4,7 +4,10 @@ from .views import (
     ProjectList, ProjectDetail, FeaturedProjectList, ContactMessageCreate, ContactMessageDetail,
     EventList, EventDetail, FeaturedEventList, NewsList, NewsDetail, FeaturedNewsList,
     PartnerList, PartnerDetail, ProgrammeList, ProgrammeDetail, ResearchAreaList, ResearchAreaDetail,
-    FacilityList, FacilityDetail, OutreachInitiativeList, OutreachInitiativeDetail
+    FacilityList, FacilityDetail, OutreachInitiativeList, OutreachInitiativeDetail,
+    DepartmentInfoList, DepartmentInfoDetail, ContactInfoList, ContactInfoDetail,
+    SocialMediaList, SocialMediaDetail, DepartmentMilestoneList, DepartmentMilestoneDetail,
+    DepartmentAchievementList, DepartmentAchievementDetail, NewsletterSubscriptionList, NewsletterSubscriptionDetail
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -62,6 +65,30 @@ urlpatterns = [
     # Outreach Initiative URLs
     path('outreach/', OutreachInitiativeList.as_view(), name='outreach-initiative-list'),
     path('outreach/<int:pk>/', OutreachInitiativeDetail.as_view(), name='outreach-initiative-detail'),
+    
+    # Department Info URLs
+    path('department-info/', DepartmentInfoList.as_view(), name='department-info-list'),
+    path('department-info/<int:pk>/', DepartmentInfoDetail.as_view(), name='department-info-detail'),
+    
+    # Contact Info URLs
+    path('contact-info/', ContactInfoList.as_view(), name='contact-info-list'),
+    path('contact-info/<int:pk>/', ContactInfoDetail.as_view(), name='contact-info-detail'),
+    
+    # Social Media URLs
+    path('social-media/', SocialMediaList.as_view(), name='social-media-list'),
+    path('social-media/<int:pk>/', SocialMediaDetail.as_view(), name='social-media-detail'),
+    
+    # Department Milestone URLs
+    path('milestones/', DepartmentMilestoneList.as_view(), name='milestone-list'),
+    path('milestones/<int:pk>/', DepartmentMilestoneDetail.as_view(), name='milestone-detail'),
+    
+    # Department Achievement URLs
+    path('achievements/', DepartmentAchievementList.as_view(), name='achievement-list'),
+    path('achievements/<int:pk>/', DepartmentAchievementDetail.as_view(), name='achievement-detail'),
+    
+    # Newsletter Subscription URLs
+    path('newsletter/', NewsletterSubscriptionList.as_view(), name='newsletter-subscription-list'),
+    path('newsletter/<int:pk>/', NewsletterSubscriptionDetail.as_view(), name='newsletter-subscription-detail'),
     
     # Authentication URLs
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
