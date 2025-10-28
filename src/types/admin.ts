@@ -97,14 +97,38 @@ export interface AdminNewsletterSubscription extends NewsletterSubscription {
   // Inherits all NewsletterSubscription fields
 }
 
-export interface AdminAnnouncement extends Announcement {
-  // Inherits all Announcement fields
+export interface AdminEvent extends Event {
+  // Inherits all Event fields
+}
+
+export interface AdminFacility extends Facility {
+  // Inherits all Facility fields
+}
+
+export interface AdminOutreachInitiative extends OutreachInitiative {
+  // Inherits all OutreachInitiative fields
+}
+
+export interface AdminPartner extends Partner {
+  // Inherits all Partner fields
 }
 
 // Import existing types
-import { 
-  News, Banner, Team, Project, Programme, ResearchArea,
-  DepartmentInfo, ContactInfo, SocialMedia, DepartmentMilestone,
-  DepartmentAchievement, Announcement, NewsletterSubscription
-} from './api';
-
+import {
+  News,
+  Banner,
+  Team,
+  Project,
+  Programme,
+  ResearchArea,
+  DepartmentInfo,
+  ContactInfo,
+  SocialMedia,
+  DepartmentMilestone,
+  DepartmentAchievement,
+  NewsletterSubscription,
+  Event,
+  Facility,
+  OutreachInitiative,
+  Partner,
+} from "./api";
