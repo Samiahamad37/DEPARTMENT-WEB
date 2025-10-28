@@ -12,8 +12,11 @@ export interface Banner {
   created_at: string;
   show_highlights: boolean;
   highlight_1_text: string;
+  highlight_1_icon?: string;
   highlight_2_text: string;
+  highlight_2_icon?: string;
   highlight_3_text: string;
+  highlight_3_icon?: string;
   overlay_opacity: number;
 }
 
@@ -33,18 +36,9 @@ export interface Team {
   title?: string;
   education?: string;
   research_areas?: string;
-  publications_count?: number;
+  publications?: string;
   awards?: string;
   get_role_display?: string;
-}
-
-export interface Announcement {
-  id: number;
-  title: string;
-  content: string;
-  date_posted: string;
-  is_featured: boolean;
-  is_active: boolean;
 }
 
 export interface Project {
@@ -146,12 +140,14 @@ export interface OutreachInitiative {
   id: number;
   title: string;
   description: string;
+  detailed_description?: string;
   image: string;
   impact_description: string;
   target_audience: string;
   start_date: string;
   end_date: string;
   is_active: boolean;
+  is_featured: boolean;
   display_order: number;
 }
 
@@ -223,6 +219,25 @@ export interface NewsletterSubscription {
   email: string;
   subscribed_at: string;
   is_active: boolean;
+}
+
+export interface SiteSettings {
+  id: number;
+  department_name: string;
+  university_name: string;
+  physical_address: string;
+  contact_email: string;
+  contact_phone: string;
+  contact_fax: string;
+  footer_caption: string;
+  footer_bottom_text: string;
+  hod_message_title: string;
+  hod_message_content: string;
+  hod_photo?: string;
+  hod_name: string;
+  hod_title: string;
+  site_description: string;
+  site_keywords: string;
 }
 
 // API Response wrapper
