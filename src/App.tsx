@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import { QueryProvider } from "./providers/QueryProvider";
 import { AdminProvider } from "./contexts/AdminContext";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import About from "./pages/About_fixed";
 import OurPeople from "./pages/OurPeople";
 import OurDepartment from "./pages/OurDepartment";
 import HireOurStudents from "./pages/HireOurStudents";
@@ -12,15 +12,9 @@ import Research from "./pages/Research";
 import Facilities from "./pages/Facilities";
 import Contact from "./pages/Contact";
 import Programs from "./pages/Programs";
-import Data from "./pages/Data";
-import Information from "./pages/Information";
-import Networking from "./pages/Networking";
-import Masters from "./pages/Masters";
-import News from "./pages/News";
 import ProspectiveStudent from "./pages/ProspectiveStudent";
 import NewsPage from "./pages/NewsPage";
 import ProjectsPage from "./pages/ProjectsPage";
-import ApiTest from "./components/ApiTest";
 import AdminLogin from "./pages/AdminLogin";
 import AdminChangePassword from "./pages/AdminChangePassword";
 import AdminDashboard from "./pages/AdminDashboard";
