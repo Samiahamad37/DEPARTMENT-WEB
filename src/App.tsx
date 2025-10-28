@@ -35,11 +35,11 @@ import SocialMediaManagement from "./pages/admin/SocialMediaManagement";
 import MilestoneManagement from "./pages/admin/MilestoneManagement";
 import AchievementManagement from "./pages/admin/AchievementManagement";
 import ResearchAreaManagement from "./pages/admin/ResearchAreaManagement";
-import AnnouncementManagement from "./pages/admin/AnnouncementManagement";
-import AdminLayout from "./components/admin/AdminLayout";
 import ProjectDetails from "./pages/ProjectDetails";
 import NewsDetails from "./pages/NewsDetails";
-import AnnouncementDetails from "./pages/AnnouncementDetails";
+import ResearchDetails from "./pages/ResearchDetails";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 function App() {
   return (
@@ -48,50 +48,230 @@ function App() {
         <Router>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Layout><Home /></Layout>} />
-            <Route path="/about" element={<Layout><About /></Layout>} />
-            <Route path="/about/people" element={<Layout><OurPeople /></Layout>} />
-            <Route path="/about/department" element={<Layout><OurDepartment /></Layout>} />
-            <Route path="/about/hire-students" element={<Layout><HireOurStudents /></Layout>} />
-            <Route path="/programs" element={<Layout><Programs /></Layout>} />
-            <Route path="/programmes" element={<Layout><Programs /></Layout>} />
-            <Route path="/collaboration" element={<Layout><Collaboration /></Layout>} />
-            <Route path="/research" element={<Layout><Research /></Layout>} />
-            <Route path="/facilities" element={<Layout><Facilities /></Layout>} />
-            <Route path="/outreach" element={<Layout><Collaboration /></Layout>} />
-            <Route path="/contact" element={<Layout><Contact /></Layout>} />
-            <Route path="/data" element={<Layout><Data /></Layout>} />
-            <Route path="/information" element={<Layout><Information /></Layout>} />
-            <Route path="/networking" element={<Layout><Networking /></Layout>} />
-            <Route path="/masters" element={<Layout><Masters /></Layout>} />
-            <Route path="/news" element={<Layout><News /></Layout>} />
-            <Route path="/news-page" element={<Layout><NewsPage /></Layout>} />
-            <Route path="/projects-page" element={<Layout><ProjectsPage /></Layout>} />
-            <Route path="/news/:id" element={<Layout><NewsDetails /></Layout>} />
-            <Route path="/projects/:id" element={<Layout><ProjectDetails /></Layout>} />
-            <Route path="/announcements/:id" element={<Layout><AnnouncementDetails /></Layout>} />
-            <Route path="/prospective-student" element={<Layout><ProspectiveStudent /></Layout>} />
-            <Route path="/api-test" element={<Layout><ApiTest /></Layout>} />
-            
+            <Route
+              path="/"
+              element={
+                <Layout>
+                  <Home />
+                </Layout>
+              }
+            />
+            <Route
+              path="/about/people"
+              element={
+                <Layout>
+                  <OurPeople />
+                </Layout>
+              }
+            />
+            <Route
+              path="/about/department"
+              element={
+                <Layout>
+                  <OurDepartment />
+                </Layout>
+              }
+            />
+            <Route
+              path="/about/hire-students"
+              element={
+                <Layout>
+                  <HireOurStudents />
+                </Layout>
+              }
+            />
+            <Route
+              path="/programmes"
+              element={
+                <Layout>
+                  <Programs />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/research"
+              element={
+                <Layout>
+                  <Research />
+                </Layout>
+              }
+            />
+            <Route
+              path="/facilities"
+              element={
+                <Layout>
+                  <Facilities />
+                </Layout>
+              }
+            />
+            <Route
+              path="/outreach"
+              element={
+                <Layout>
+                  <Collaboration />
+                </Layout>
+              }
+            />
+            <Route
+              path="/contact"
+              element={
+                <Layout>
+                  <Contact />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/news-page"
+              element={
+                <Layout>
+                  <NewsPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/projects-page"
+              element={
+                <Layout>
+                  <ProjectsPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/news/:id"
+              element={
+                <Layout>
+                  <NewsDetails />
+                </Layout>
+              }
+            />
+            <Route
+              path="/projects/:id"
+              element={
+                <Layout>
+                  <ProjectDetails />
+                </Layout>
+              }
+            />
+            <Route
+              path="/research/:id"
+              element={
+                <Layout>
+                  <ResearchDetails />
+                </Layout>
+              }
+            />
+            <Route
+              path="/prospective-student"
+              element={
+                <Layout>
+                  <ProspectiveStudent />
+                </Layout>
+              }
+            />
+
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/change-password" element={<AdminChangePassword />} />
+            <Route
+              path="/admin/change-password"
+              element={<AdminChangePassword />}
+            />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin" element={<AdminLogin />} />
-            
-            {/* Admin Content Management Routes */}
-            <Route path="/admin/news" element={<AdminLayout><NewsManagement /></AdminLayout>} />
-            <Route path="/admin/announcements" element={<AdminLayout><AnnouncementManagement /></AdminLayout>} />
-            <Route path="/admin/banners" element={<AdminLayout><BannerManagement /></AdminLayout>} />
-            <Route path="/admin/team" element={<AdminLayout><TeamManagement /></AdminLayout>} />
-            <Route path="/admin/projects" element={<AdminLayout><ProjectManagement /></AdminLayout>} />
-            <Route path="/admin/programmes" element={<AdminLayout><ProgrammeManagement /></AdminLayout>} />
-            <Route path="/admin/department-info" element={<AdminLayout><DepartmentInfoManagement /></AdminLayout>} />
-            <Route path="/admin/contact-info" element={<AdminLayout><ContactInfoManagement /></AdminLayout>} />
-            <Route path="/admin/social-media" element={<AdminLayout><SocialMediaManagement /></AdminLayout>} />
-            <Route path="/admin/milestones" element={<AdminLayout><MilestoneManagement /></AdminLayout>} />
-            <Route path="/admin/achievements" element={<AdminLayout><AchievementManagement /></AdminLayout>} />
-            <Route path="/admin/research-areas" element={<AdminLayout><ResearchAreaManagement /></AdminLayout>} />
+
+            {/* Admin Content Management Routes - Protected */}
+            <Route
+              path="/admin/news"
+              element={
+                <ProtectedRoute>
+                  <NewsManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/banners"
+              element={
+                <ProtectedRoute>
+                  <BannerManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/team"
+              element={
+                <ProtectedRoute>
+                  <TeamManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/projects"
+              element={
+                <ProtectedRoute>
+                  <ProjectManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/programmes"
+              element={
+                <ProtectedRoute>
+                  <ProgrammeManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/department-info"
+              element={
+                <ProtectedRoute>
+                  <DepartmentInfoManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/contact-info"
+              element={
+                <ProtectedRoute>
+                  <ContactInfoManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/social-media"
+              element={
+                <ProtectedRoute>
+                  <SocialMediaManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/milestones"
+              element={
+                <ProtectedRoute>
+                  <MilestoneManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/achievements"
+              element={
+                <ProtectedRoute>
+                  <AchievementManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/research-areas"
+              element={
+                <ProtectedRoute>
+                  <ResearchAreaManagement />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 404 Not Found - Must be last */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </AdminProvider>
