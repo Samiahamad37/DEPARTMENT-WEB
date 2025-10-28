@@ -6,7 +6,7 @@ export const newsSchema = yup.object({
   description: yup.string().required('Description is required'),
   image: yup.mixed().required('Image is required'),
   category: yup.string().required('Category is required').oneOf([
-    'announcement', 'event', 'research', 'student_achievement', 
+    'event', 'research', 'student_achievement', 
     'faculty_news', 'department_news', 'general'
   ]),
   author: yup.string().max(100, 'Author name must be less than 100 characters'),
