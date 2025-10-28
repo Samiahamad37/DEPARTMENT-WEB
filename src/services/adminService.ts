@@ -5,8 +5,9 @@ import {
   AdminTeam, AdminProject, AdminProgramme, AdminResearchArea,
   AdminDepartmentInfo, AdminContactInfo, AdminSocialMedia,
   AdminDepartmentMilestone, AdminDepartmentAchievement,
-  AdminNewsletterSubscription, AdminAnnouncement, QueryParams
+  AdminNewsletterSubscription
 } from '../types/admin';
+import { QueryParams } from '../types/api';
 
 // Authentication
 export const adminAuthService = {
@@ -368,30 +369,3 @@ export const adminNewsletterService = {
     await api.delete(`/admin/content/newsletter/${id}/`);
   },
 };
-
-export const adminAnnouncementService = {
-  getAnnouncements: async (params?: QueryParams): Promise<AdminAnnouncement[]> => {
-    const response = await api.get('/admin/content/announcements/', { params });
-    return response.data;
-  },
-
-  getAnnouncementById: async (id: number): Promise<AdminAnnouncement> => {
-    const response = await api.get(`/admin/content/announcements/${id}/`);
-    return response.data;
-  },
-
-  createAnnouncement: async (data: Partial<AdminAnnouncement>): Promise<AdminAnnouncement> => {
-    const response = await api.post('/admin/content/announcements/', data);
-    return response.data;
-  },
-
-  updateAnnouncement: async (id: number, data: Partial<AdminAnnouncement>): Promise<AdminAnnouncement> => {
-    const response = await api.put(`/admin/content/announcements/${id}/`, data);
-    return response.data;
-  },
-
-  deleteAnnouncement: async (id: number): Promise<void> => {
-    await api.delete(`/admin/content/announcements/${id}/`);
-  },
-};
-
