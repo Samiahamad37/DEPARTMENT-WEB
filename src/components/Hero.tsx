@@ -23,8 +23,11 @@ const Hero: React.FC = () => {
       created_at: "2024-01-01T00:00:00Z",
       show_highlights: true,
       highlight_1_text: "Excellence in Education",
+      highlight_1_icon: undefined,
       highlight_2_text: "Industry Partnerships",
+      highlight_2_icon: undefined,
       highlight_3_text: "Research Impact",
+      highlight_3_icon: undefined,
       overlay_opacity: 0.4
     },
     {
@@ -40,8 +43,11 @@ const Hero: React.FC = () => {
       created_at: "2024-01-01T00:00:00Z",
       show_highlights: false,
       highlight_1_text: "",
+      highlight_1_icon: undefined,
       highlight_2_text: "",
+      highlight_2_icon: undefined,
       highlight_3_text: "",
+      highlight_3_icon: undefined,
       overlay_opacity: 0.6
     },
     {
@@ -57,8 +63,11 @@ const Hero: React.FC = () => {
       created_at: "2024-01-01T00:00:00Z",
       show_highlights: true,
       highlight_1_text: "Student Achievement",
+      highlight_1_icon: undefined,
       highlight_2_text: "Career Success",
+      highlight_2_icon: undefined,
       highlight_3_text: "Global Impact",
+      highlight_3_icon: undefined,
       overlay_opacity: 0.3
     }
   ];
@@ -180,23 +189,50 @@ const Hero: React.FC = () => {
             <div className="grid grid-cols-1 gap-6">
               {currentBanner.highlight_1_text && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors duration-200">
-                  <Award className="text-orange-600 mb-4" size={48} />
-                  <h3 className="text-xl font-semibold mb-2">{currentBanner.highlight_1_text}</h3>
-                  <p className="text-blue-200">Recognized programs in computer systems and mathematical sciences</p>
+                  <div className="flex items-center space-x-4">
+                    {currentBanner.highlight_1_icon ? (
+                      <img 
+                        src={currentBanner.highlight_1_icon} 
+                        alt="Highlight 1" 
+                        className="w-12 h-12 object-contain flex-shrink-0"
+                      />
+                    ) : (
+                      <Award className="text-orange-600 flex-shrink-0" size={48} />
+                    )}
+                    <h3 className="text-xl font-semibold">{currentBanner.highlight_1_text}</h3>
+                  </div>
                 </div>
               )}
               {currentBanner.highlight_2_text && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors duration-200">
-                  <Users className="text-green-400 mb-4" size={48} />
-                  <h3 className="text-xl font-semibold mb-2">{currentBanner.highlight_2_text}</h3>
-                  <p className="text-blue-200">Strong collaborations with leading technology companies</p>
+                  <div className="flex items-center space-x-4">
+                    {currentBanner.highlight_2_icon ? (
+                      <img 
+                        src={currentBanner.highlight_2_icon} 
+                        alt="Highlight 2" 
+                        className="w-12 h-12 object-contain flex-shrink-0"
+                      />
+                    ) : (
+                      <Users className="text-green-400 flex-shrink-0" size={48} />
+                    )}
+                    <h3 className="text-xl font-semibold">{currentBanner.highlight_2_text}</h3>
+                  </div>
                 </div>
               )}
               {currentBanner.highlight_3_text && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors duration-200">
-                  <BookOpen className="text-orange-600 mb-4" size={48} />
-                  <h3 className="text-xl font-semibold mb-2">{currentBanner.highlight_3_text}</h3>
-                  <p className="text-blue-200">Published research contributing to global knowledge</p>
+                  <div className="flex items-center space-x-4">
+                    {currentBanner.highlight_3_icon ? (
+                      <img 
+                        src={currentBanner.highlight_3_icon} 
+                        alt="Highlight 3" 
+                        className="w-12 h-12 object-contain flex-shrink-0"
+                      />
+                    ) : (
+                      <BookOpen className="text-orange-600 flex-shrink-0" size={48} />
+                    )}
+                    <h3 className="text-xl font-semibold">{currentBanner.highlight_3_text}</h3>
+                  </div>
                 </div>
               )}
             </div>

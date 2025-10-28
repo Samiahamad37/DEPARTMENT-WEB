@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   GraduationCap, 
@@ -12,133 +12,23 @@ import {
   ExternalLink,
   CheckCircle,
   ArrowRight,
-  FileText,
-  Download,
-  Clock,
-  Star
+  Clock
 } from 'lucide-react';
-
-interface Announcement {
-  id: number;
-  title: string;
-  content: string;
-  date_posted: string;
-  is_important: boolean;
-  category: string;
-}
-
-interface Program {
-  id: number;
-  name: string;
-  duration: string;
-  level: string;
-  requirements: string[];
-  application_deadline: string;
-  intake_period: string;
-}
+import { useProgrammes } from '../hooks/useProgrammes';
 
 const ProspectiveStudent: React.FC = () => {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Fetch programs from backend
+  const { data: programmes, isLoading } = useProgrammes();
 
-  // Static data - will be replaced with API data later
-  const staticAnnouncements: Announcement[] = [
-    {
-      id: 1,
-      title: "2024/2025 Academic Year Applications Now Open",
-      content: "Applications for the 2024/2025 academic year are now open. Apply early to secure your place in our competitive programs.",
-      date_posted: "2024-01-15T10:00:00Z",
-      is_important: true,
-      category: "admissions"
-    },
-    {
-      id: 2,
-      title: "New Scholarship Opportunities Available",
-      content: "The department is pleased to announce new scholarship opportunities for outstanding students in Computer Science and Mathematics programs.",
-      date_posted: "2024-01-12T14:30:00Z",
-      is_important: true,
-      category: "scholarships"
-    },
-    {
-      id: 3,
-      title: "Virtual Campus Tour Available",
-      content: "Take a virtual tour of our state-of-the-art facilities and laboratories from the comfort of your home.",
-      date_posted: "2024-01-10T09:15:00Z",
-      is_important: false,
-      category: "campus"
-    }
-  ];
-
-  const staticPrograms: Program[] = [
-    {
-      id: 1,
-      name: "Bachelor of Science in Computer Science",
-      duration: "4 years",
-      level: "Undergraduate",
-      requirements: [
-        "Advanced Level Certificate with at least two principal passes in Mathematics and Physics",
-        "Minimum grade C in Mathematics and Physics at O-Level",
-        "English language proficiency"
-      ],
-      application_deadline: "2024-03-31",
-      intake_period: "September 2024"
-    },
-    {
-      id: 2,
-      name: "Bachelor of Science in Mathematics",
-      duration: "4 years",
-      level: "Undergraduate",
-      requirements: [
-        "Advanced Level Certificate with at least two principal passes in Mathematics",
-        "Minimum grade C in Mathematics at O-Level",
-        "English language proficiency"
-      ],
-      application_deadline: "2024-03-31",
-      intake_period: "September 2024"
-    },
-    {
-      id: 3,
-      name: "Master of Science in Computer Science",
-      duration: "2 years",
-      level: "Postgraduate",
-      requirements: [
-        "Bachelor's degree in Computer Science or related field",
-        "Minimum GPA of 3.0",
-        "Research proposal",
-        "English language proficiency"
-      ],
-      application_deadline: "2024-04-30",
-      intake_period: "September 2024"
-    }
-  ];
-
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setAnnouncements(staticAnnouncements);
-      setPrograms(staticPrograms);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'admissions': 'bg-blue-100 text-blue-800',
-      'scholarships': 'bg-green-100 text-green-800',
-      'campus': 'bg-purple-100 text-purple-800',
-      'events': 'bg-orange-100 text-orange-800',
-      'general': 'bg-gray-100 text-gray-800'
+  const getDegreeTypeDisplay = (type: string) => {
+    const types: { [key: string]: string } = {
+      'certificate': 'Certificate',
+      'diploma': 'Diploma',
+      'bachelor': 'Undergraduate',
+      'master': 'Postgraduate',
+      'phd': 'PhD'
     };
-    return colors[category] || 'bg-gray-100 text-gray-800';
+    return types[type] || 'Program';
   };
 
   if (isLoading) {
@@ -209,50 +99,6 @@ const ProspectiveStudent: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              Application Timeline
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Application Periods</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <Calendar className="w-5 h-5 text-orange-600 mr-3" />
-                    <div>
-                      <p className="font-medium text-gray-900">Main Intake</p>
-                      <p className="text-sm text-gray-600">Applications typically open in March and close in June</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="w-5 h-5 text-blue-600 mr-3" />
-                    <div>
-                      <p className="font-medium text-gray-900">Supplementary Intake</p>
-                      <p className="text-sm text-gray-600">Applications typically open in August and close in October</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Important Notes</h4>
-                <div className="space-y-3">
-                  <div className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
-                    <p className="text-sm text-gray-700">Specific dates are subject to official ARU announcements</p>
-                  </div>
-                  <div className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
-                    <p className="text-sm text-gray-700">Application deadlines may vary by program</p>
-                  </div>
-                  <div className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
-                    <p className="text-sm text-gray-700">Early application is recommended for competitive programs</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -299,50 +145,6 @@ const ProspectiveStudent: React.FC = () => {
         </div>
       </section>
 
-      {/* Announcements */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Latest Announcements
-            </h2>
-            <p className="text-xl text-gray-600">
-              Stay updated with important information for prospective students
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {announcements.map((announcement) => (
-              <div
-                key={announcement.id}
-                className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-6 ${
-                  announcement.is_important ? 'ring-2 ring-orange-500' : ''
-                }`}
-              >
-                {announcement.is_important && (
-                  <div className="flex items-center mb-4">
-                    <Star className="w-5 h-5 text-orange-500 mr-2" />
-                    <span className="text-sm font-semibold text-orange-600">Important</span>
-                  </div>
-                )}
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  {announcement.title}
-                </h3>
-                <p className="text-gray-600 mb-4">{announcement.content}</p>
-                <div className="flex items-center justify-between">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(announcement.category)}`}>
-                    {announcement.category.charAt(0).toUpperCase() + announcement.category.slice(1)}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {formatDate(announcement.date_posted)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Programs Overview */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -356,54 +158,48 @@ const ProspectiveStudent: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-            {programs.map((program) => (
-              <div
-                key={program.id}
-                className="bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-6"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                    {program.level}
-                  </span>
-                  <span className="text-sm text-gray-500">{program.duration}</span>
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  {program.name}
-                </h3>
-                
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span>Application Deadline: {formatDate(program.application_deadline)}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Clock className="w-4 h-4 mr-2" />
-                    <span>Intake: {program.intake_period}</span>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-2">Requirements:</h4>
-                  <ul className="space-y-1">
-                    {program.requirements.map((req, index) => (
-                      <li key={index} className="flex items-start text-sm text-gray-600">
-                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span>{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Link
-                  to="/programmes"
-                  className="inline-flex items-center w-full justify-center px-4 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all duration-300"
+            {programmes && programmes.length > 0 ? (
+              programmes.map((programme) => (
+                <div
+                  key={programme.id}
+                  className="bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-6"
                 >
-                  Learn More
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                      {getDegreeTypeDisplay(programme.degree_type)}
+                    </span>
+                    <span className="text-sm text-gray-500">{programme.duration}</span>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {programme.title}
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    {programme.description}
+                  </p>
+
+                  {programme.requirements && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-gray-900 mb-2">Requirements:</h4>
+                      <p className="text-sm text-gray-600 line-clamp-3">{programme.requirements}</p>
+                    </div>
+                  )}
+
+                  <Link
+                    to={`/programmes`}
+                    className="inline-flex items-center w-full justify-center px-4 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all duration-300"
+                  >
+                    Learn More
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-600">No programs available at the moment.</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>

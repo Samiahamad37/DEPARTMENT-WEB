@@ -164,19 +164,17 @@ const StaffProfileModal: React.FC<StaffProfileModalProps> = ({ staff, isOpen, on
             )}
 
             {/* Publications */}
-            {staff.publications_count && staff.publications_count > 0 && (
+            {staff.publications && staff.publications.trim() && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                   <BookOpen className="h-5 w-5 mr-2 text-purple-600" />
                   Publications
                 </h3>
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                  <p className="text-purple-800 font-medium">
-                    {staff.publications_count} publication{staff.publications_count !== 1 ? 's' : ''}
-                  </p>
-                  <p className="text-purple-600 text-sm mt-1">
-                    Detailed publication list available upon request
-                  </p>
+                  <div 
+                    className="text-purple-800 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: staff.publications }}
+                  />
                 </div>
               </div>
             )}

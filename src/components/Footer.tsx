@@ -15,7 +15,7 @@ import {
 import { useContactInfo } from "../hooks/useContact";
 import { useSocialMedia } from "../hooks/useSocialMedia";
 import { useDepartmentInfo } from "../hooks/useDepartment";
-import { ContactInfo, SocialMedia, DepartmentInfo } from "../types/api";
+import { useSiteSettings } from "../hooks/useSiteSettings";
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -38,6 +38,11 @@ const Footer: React.FC = () => {
     isLoading: deptLoading,
     error: deptError,
   } = useDepartmentInfo();
+  const {
+    data: siteSettings,
+    isLoading: settingsLoading,
+    error: settingsError,
+  } = useSiteSettings();
 
   // Use API data or fallback to static data
   const contactData = contactInfo.length > 0 ? contactInfo[0] : null;
@@ -48,6 +53,8 @@ const Footer: React.FC = () => {
   if (contactError) console.error("Error loading contact info:", contactError);
   if (socialError) console.error("Error loading social media:", socialError);
   if (deptError) console.error("Error loading department info:", deptError);
+  if (settingsError)
+    console.error("Error loading site settings:", settingsError);
 
   const quickLinks = [
     { path: "/about", label: "About Us" },
@@ -89,15 +96,21 @@ const Footer: React.FC = () => {
           {/* Department Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">CSM</span>
-              </div>
+              <img
+                src="/src/assets/ARU-logo.png"
+                alt="Ardhi University Logo"
+                className="w-12 h-12"
+              />
               <div>
                 <h3 className="text-xl font-bold">
-                  {departmentData?.name || "Computer Systems & Mathematics"}
+                  {siteSettings?.department_name ||
+                    departmentData?.name ||
+                    "Computer Systems & Mathematics"}
                 </h3>
                 <p className="text-blue-200 text-sm">
-                  {departmentData?.university || "Ardhi University"}
+                  {siteSettings?.university_name ||
+                    departmentData?.university ||
+                    "Ardhi University"}
                 </p>
               </div>
             </div>
@@ -216,7 +229,8 @@ const Footer: React.FC = () => {
                 />
                 <div>
                   <p className="text-blue-200 text-sm leading-relaxed">
-                    {contactData?.address ||
+                    {siteSettings?.physical_address ||
+                      contactData?.address ||
                       "Ardhi University\nP.O. Box 35176\nDar es Salaam, Tanzania"}
                   </p>
                 </div>
@@ -229,7 +243,9 @@ const Footer: React.FC = () => {
                 />
                 <div>
                   <p className="text-blue-200 text-sm">
-                    {contactData?.phone || "+255 22 277 5004"}
+                    {siteSettings?.contact_phone ||
+                      contactData?.phone ||
+                      "+255 22 277 5004"}
                   </p>
                   <p className="text-blue-300 text-xs">Main Office</p>
                 </div>
@@ -242,7 +258,9 @@ const Footer: React.FC = () => {
                 />
                 <div>
                   <p className="text-blue-200 text-sm">
-                    {contactData?.email || "info@csm.aru.ac.tz"}
+                    {siteSettings?.contact_email ||
+                      contactData?.email ||
+                      "info@csm.aru.ac.tz"}
                   </p>
                   <p className="text-blue-300 text-xs">General Inquiries</p>
                 </div>
@@ -270,12 +288,14 @@ const Footer: React.FC = () => {
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
             <div className="text-center lg:text-left">
               <p className="text-blue-200 text-sm">
-                &copy; {new Date().getFullYear()} Department of Computer Systems
-                & Mathematics, Ardhi University. All rights reserved.
+                {siteSettings?.footer_caption ||
+                  `© ${new Date().getFullYear()} Department of Computer Systems & Mathematics, Ardhi University. All rights reserved.`}
               </p>
-              <p className="text-blue-300 text-xs mt-1">
-                Proudly serving Tanzania and East Africa since 2001
-              </p>
+              {siteSettings?.footer_bottom_text && (
+                <p className="text-blue-300 text-xs mt-1">
+                  {siteSettings.footer_bottom_text}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center space-x-6">

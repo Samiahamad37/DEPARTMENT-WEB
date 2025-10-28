@@ -147,7 +147,6 @@ const NewsPage: React.FC = () => {
     { label: 'Partnerships', value: 'partnership' },
     { label: 'Events', value: 'event' },
     { label: 'Facilities', value: 'facilities' },
-    { label: 'Announcements', value: 'announcement' },
     { label: 'General', value: 'general' },
   ];
 

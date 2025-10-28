@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit, Trash2, Eye, Search, Filter, ChevronUp, ChevronDown } from 'lucide-react';
+import Pagination from '../Pagination';
 
 interface Column {
   key: string;
@@ -21,6 +22,12 @@ interface AdminDataTableProps {
   onView?: (item: any) => void;
   onCreate?: () => void;
   onSearch?: (query: string) => void;
+  // Pagination props
+  currentPage?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
+  pageSize?: number;
+  totalItems?: number;
 }
 
 const AdminDataTable: React.FC<AdminDataTableProps> = ({
@@ -35,7 +42,12 @@ const AdminDataTable: React.FC<AdminDataTableProps> = ({
   onDelete,
   onView,
   onCreate,
-  onSearch
+  onSearch,
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange,
+  pageSize = 10,
+  totalItems = 0
 }) => {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
@@ -262,13 +274,29 @@ const AdminDataTable: React.FC<AdminDataTableProps> = ({
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">1</span> to{' '}
-                <span className="font-medium">{data.length}</span> of{' '}
-                <span className="font-medium">{data.length}</span> results
+                Showing <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> to{' '}
+                <span className="font-medium">{Math.min(currentPage * pageSize, totalItems)}</span> of{' '}
+                <span className="font-medium">{totalItems}</span> results
               </p>
             </div>
+            {onPageChange && totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            )}
           </div>
         </div>
+        {onPageChange && totalPages > 1 && (
+          <div className="sm:hidden mt-4">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

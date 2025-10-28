@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, Users, Clock, Award, Globe, ChevronDown, ChevronUp, CheckCircle, Star, ExternalLink, Cpu, Shield, Database, Zap, Monitor, Wifi, Camera, Printer } from 'lucide-react';
+import { useFacilities } from '../hooks/useFacilities';
 
-interface Facility {
+interface LocalFacility {
   id: number;
   name: string;
   description: string;
@@ -22,8 +23,11 @@ const Facilities: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('All');
   const [expandedFacility, setExpandedFacility] = useState<number | null>(null);
 
-  // Static facilities data - will be replaced with API data later
-  const facilities: Facility[] = [
+  // Fetch data from backend
+  const { data: facilitiesFromAPI = [], isLoading: facilitiesLoading } = useFacilities();
+
+  // Static data as fallback (defined before useMemo)
+  const staticFacilitiesData: LocalFacility[] = [
     {
       id: 1,
       name: "AI & Machine Learning Laboratory",
@@ -200,6 +204,31 @@ const Facilities: React.FC = () => {
     }
   ];
 
+  // Map API data to local format with useMemo
+  const facilities: LocalFacility[] = useMemo(() => {
+    if (facilitiesFromAPI.length === 0) {
+      // Return static data as fallback
+      return staticFacilitiesData;
+    }
+    
+    // Map API data to local format
+    return facilitiesFromAPI.map(fac => ({
+      id: fac.id,
+      name: fac.name,
+      description: fac.description,
+      type: 'general' as const,
+      capacity: parseInt(fac.capacity) || 0,
+      equipment: fac.equipment_list ? fac.equipment_list.split(',').map(e => e.trim()) : [],
+      features: [],
+      image: fac.image,
+      location: fac.location || '',
+      availability: '',
+      isPopular: false,
+      staff: [],
+      projects: []
+    }));
+  }, [facilitiesFromAPI]);
+
   const facilityTypes = [
     { value: 'All', label: 'All Facilities' },
     { value: 'computer_lab', label: 'Computer Labs' },
@@ -208,9 +237,9 @@ const Facilities: React.FC = () => {
     { value: 'general', label: 'General Facilities' }
   ];
 
-  const filteredFacilities = selectedType === 'All' 
-    ? facilities 
-    : facilities.filter(facility => facility.type === selectedType);
+  const filteredFacilities = (facilities || []).filter(facility => 
+    selectedType === 'All' || facility.type === selectedType
+  );
 
   const getTypeColor = (type: string) => {
     const colors: { [key: string]: string } = {
@@ -235,6 +264,18 @@ const Facilities: React.FC = () => {
   const toggleFacility = (facilityId: number) => {
     setExpandedFacility(expandedFacility === facilityId ? null : facilityId);
   };
+
+  // Loading state
+  if (facilitiesLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading facilities...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -4,8 +4,7 @@ import {
   adminNewsService, adminBannerService, adminTeamService,
   adminProjectService, adminProgrammeService, adminResearchAreaService,
   adminDepartmentInfoService, adminContactInfoService, adminSocialMediaService,
-  adminMilestoneService, adminAchievementService, adminNewsletterService,
-  adminAnnouncementService
+  adminMilestoneService, adminAchievementService, adminNewsletterService
 } from '../services/adminService';
 import { 
   AdminUser, AdminLoginRequest, ChangePasswordRequest,
@@ -13,8 +12,9 @@ import {
   AdminTeam, AdminProject, AdminProgramme, AdminResearchArea,
   AdminDepartmentInfo, AdminContactInfo, AdminSocialMedia,
   AdminDepartmentMilestone, AdminDepartmentAchievement,
-  AdminNewsletterSubscription, AdminAnnouncement, QueryParams
+  AdminNewsletterSubscription
 } from '../types/admin';
+import { QueryParams } from '../types/api';
 
 // Query Keys
 export const adminKeys = {
@@ -676,51 +676,13 @@ export const useDeleteAdminNewsletterSubscription = () => {
   });
 };
 
-// Content Management Hooks - Announcements
-export const useAdminAnnouncements = (params?: QueryParams) => {
-  return useQuery({
-    queryKey: adminKeys.content('announcements'),
-    queryFn: () => adminAnnouncementService.getAnnouncements(params),
-  });
-};
+// Note: The useAdminEvents, useAdminFacilities, useAdminOutreach, useAdminPartners hooks 
+// would need to be added to adminService.ts first, then added here
+// For now, using placeholder exports that can be implemented later
 
-export const useAdminAnnouncementById = (id: number) => {
-  return useQuery({
-    queryKey: adminKeys.contentItem('announcements', id),
-    queryFn: () => adminAnnouncementService.getAnnouncementById(id),
-    enabled: !!id,
-  });
-};
+export const useAdminEvents = () => useQuery({ queryKey: adminKeys.content('events'), queryFn: async () => [] });
+export const useAdminFacilities = () => useQuery({ queryKey: adminKeys.content('facilities'), queryFn: async () => [] });
+export const useAdminOutreach = () => useQuery({ queryKey: adminKeys.content('outreach'), queryFn: async () => [] });
+export const useAdminPartners = () => useQuery({ queryKey: adminKeys.content('partners'), queryFn: async () => [] });
 
-export const useCreateAdminAnnouncement = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: Partial<AdminAnnouncement>) => adminAnnouncementService.createAnnouncement(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.content('announcements') });
-    },
-  });
-};
-
-export const useUpdateAdminAnnouncement = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<AdminAnnouncement> }) =>
-      adminAnnouncementService.updateAnnouncement(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.content('announcements') });
-      queryClient.invalidateQueries({ queryKey: adminKeys.contentItem('announcements', id) });
-    },
-  });
-};
-
-export const useDeleteAdminAnnouncement = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: number) => adminAnnouncementService.deleteAnnouncement(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.content('announcements') });
-    },
-  });
-};
 

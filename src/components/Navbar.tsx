@@ -77,14 +77,11 @@ const Navbar: React.FC = () => {
           <div className={`flex-shrink-0 flex items-center transition-all duration-300 ${
             isScrolled ? 'mr-4' : 'mr-6'
           }`}>
-            <div className={`bg-gradient-to-br from-blue-600 to-orange-500 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 ${
-              isScrolled ? 'w-12 h-12' : 'w-16 h-16 md:w-18 md:h-18'
-            }`}>
-              <span className={`text-white font-bold transition-all duration-300 ${
-                isScrolled ? 'text-sm' : 'text-lg md:text-xl'
-              }`}>
-              <img src="/src/assets/ARU-logo.png" alt="logo" className='w-10 h-10' /></span>
-            </div>
+            <img 
+              src="/src/assets/ARU-logo.png" 
+              alt="Ardhi University Logo" 
+              className={`${isScrolled ? 'w-14 h-14' : 'w-20 h-20 md:w-24 md:h-24'}`}
+            />
           </div>
 
           {/* Right Column - Department name and navigation */}

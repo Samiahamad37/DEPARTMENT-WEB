@@ -11,6 +11,8 @@ const SocialMediaManagement: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSocial, setEditingSocial] = useState<SocialMedia | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const { data: socialMedia, isLoading, createSocialMedia, updateSocialMedia, deleteSocialMedia } = useSocialMedia();
 
@@ -125,7 +127,25 @@ const SocialMediaManagement: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page when searching
   };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Filter data based on search query
+  const filteredData = socialMedia?.filter(item =>
+    item.platform.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.url.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
+  // Calculate pagination
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
   return (
     <div className="space-y-6">
@@ -149,7 +169,7 @@ const SocialMediaManagement: React.FC = () => {
         <AdminDataTable
           title="Social Media Links"
           columns={columns}
-          data={socialMedia || []}
+          data={paginatedData}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onCreate={handleCreate}
@@ -158,6 +178,11 @@ const SocialMediaManagement: React.FC = () => {
           isLoading={isLoading}
           emptyMessage="No social media links found"
           searchPlaceholder="Search social media..."
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          pageSize={pageSize}
+          totalItems={totalItems}
         />
       )}
     </div>

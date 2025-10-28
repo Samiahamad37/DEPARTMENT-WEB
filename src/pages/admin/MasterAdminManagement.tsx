@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Plus, Edit, Trash2, Eye, Search, Filter, Calendar, Megaphone, 
+  Plus, Edit, Trash2, Eye, Search, Filter, Calendar, 
   Users, Image, Briefcase, GraduationCap, Microscope, Building, 
   Phone, Share2, Award, Newspaper, Globe, Mail, BarChart3
 } from 'lucide-react';
@@ -32,16 +32,6 @@ const MasterAdminManagement: React.FC = () => {
       description: 'Manage news articles and updates',
       count: stats?.news_count || 0,
       href: '/admin/news'
-    },
-    {
-      id: 'announcements',
-      name: 'Announcements',
-      icon: Megaphone,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      description: 'Manage department announcements',
-      count: stats?.announcements_count || 0,
-      href: '/admin/announcements'
     },
     {
       id: 'banners',

@@ -18,7 +18,6 @@ import {
   X,
   LogOut,
   ArrowLeft,
-  Megaphone,
   ChevronRight,
   Home,
 } from "lucide-react";
@@ -45,12 +44,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: "/admin/news",
       icon: Newspaper,
       current: location.pathname === "/admin/news",
-    },
-    {
-      name: "Announcement Management",
-      href: "/admin/announcements",
-      icon: Megaphone,
-      current: location.pathname === "/admin/announcements",
     },
     {
       name: "Banner Management",
@@ -124,18 +117,20 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   // Generate breadcrumbs based on current path
   const generateBreadcrumbs = () => {
-    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const pathSegments = location.pathname.split("/").filter(Boolean);
     const breadcrumbs = [
-      { name: 'Admin', href: '/admin/dashboard', icon: Home }
+      { name: "Admin", href: "/admin/dashboard", icon: Home },
     ];
 
     if (pathSegments.length > 1) {
-      const currentItem = navigationItems.find(item => item.href === location.pathname);
+      const currentItem = navigationItems.find(
+        (item) => item.href === location.pathname
+      );
       if (currentItem) {
         breadcrumbs.push({
           name: currentItem.name,
           href: currentItem.href,
-          icon: currentItem.icon
+          icon: currentItem.icon,
         });
       }
     }
@@ -166,7 +161,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
           <div className="flex items-center">
             <BarChart3 className="h-8 w-8 text-orange-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900">Admin Panel</span>
+            <span className="ml-2 text-xl font-bold text-gray-900">
+              Admin Panel
+            </span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -232,13 +229,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               >
                 <Menu className="h-6 w-6" />
               </button>
-              
+
               {/* Breadcrumbs */}
               <nav className="flex items-center space-x-2 ml-4">
                 {breadcrumbs.map((breadcrumb, index) => {
                   const BreadcrumbIcon = breadcrumb.icon;
                   const isLast = index === breadcrumbs.length - 1;
-                  
+
                   return (
                     <div key={breadcrumb.href} className="flex items-center">
                       {index > 0 && (
@@ -260,7 +257,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 })}
               </nav>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
@@ -288,9 +285,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
         {/* Page content */}
         <main className="flex-1 p-6 bg-gray-50 min-h-screen">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
+          <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>

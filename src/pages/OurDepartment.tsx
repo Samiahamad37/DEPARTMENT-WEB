@@ -69,8 +69,26 @@ const OurDepartment: React.FC = () => {
     }
   ];
 
-  // Use API data or fallback to static data
-  const milestoneData = milestones.length > 0 ? milestones : fallbackMilestones;
+  // Process milestones to show max 10: first is establishment (oldest), rest are most recent
+  const processedMilestones = (() => {
+    if (milestones.length === 0) return fallbackMilestones;
+    
+    // Sort by year (ascending) - oldest first
+    const sorted = [...milestones].sort((a, b) => {
+      // Convert year to number for proper numeric comparison
+      const yearA = parseInt(a.year) || 0;
+      const yearB = parseInt(b.year) || 0;
+      return yearA - yearB;
+    });
+    
+    // The first (oldest) is the establishment milestone
+    // Take max 10 items: establishment first, then next 9 most recent
+    const limited = sorted.slice(0, 10);
+    
+    return limited.length > 0 ? limited : sorted.slice(-10);
+  })();
+
+  const milestoneData = processedMilestones;
   const achievementData = achievements.length > 0 ? achievements : fallbackAchievements;
   const researchAreaData = researchAreas.length > 0 ? researchAreas : fallbackResearchAreas;
   const departmentData = departmentInfo.length > 0 ? departmentInfo[0] : null;
@@ -295,11 +313,16 @@ const OurDepartment: React.FC = () => {
             <p className="text-xl text-gray-600">Key milestones in our department's history</p>
           </div>
           
-          <div className="relative">
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-orange-500 to-blue-500 rounded-full"></div>
-            
-            <div className="space-y-12">
-              {milestoneData.map((milestone, index) => (
+          {milestoneData.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No milestones available at the moment.</p>
+            </div>
+          ) : (
+            <div className="relative">
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-orange-500 to-blue-500 rounded-full"></div>
+              
+              <div className="space-y-12">
+                {milestoneData.map((milestone, index) => (
                 <div key={milestone.id} className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
                   <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
                     <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
@@ -315,7 +338,107 @@ const OurDepartment: React.FC = () => {
                   
                   <div className="w-1/2"></div>
                 </div>
-              ))}
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Department History */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our History</h2>
+            <p className="text-xl text-gray-600">A legacy of excellence in education and innovation</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Founding & Early Years</h3>
+              <p className="text-gray-700 mb-4">
+                The Computer Systems & Mathematics Department was established in 2001 as part of Ardhi University's 
+                commitment to technology education and innovation in Tanzania. From the beginning, our mission has been 
+                to provide high-quality education in computer science, software engineering, and applied mathematics.
+              </p>
+              <p className="text-gray-700 mb-4">
+                Our first decade focused on building a strong foundation with dedicated faculty, modern facilities, and 
+                industry partnerships. We graduated our first cohort of computer science professionals in 2005, setting 
+                a standard of excellence that continues to this day.
+              </p>
+              <div className="flex items-center text-orange-600 font-semibold">
+                <TrendingUp size={20} className="mr-2" />
+                <span>Pioneering Technology Education</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Growth & Excellence</h3>
+              <p className="text-gray-700 mb-4">
+                Throughout the 2010s, we expanded our research capabilities and established specialized laboratories 
+                in artificial intelligence, cybersecurity, and data science. Our commitment to innovation led to the 
+                development of cutting-edge programs that prepare students for the evolving tech landscape.
+              </p>
+              <p className="text-gray-700 mb-4">
+                Strategic partnerships with industry leaders, government institutions, and international universities 
+                have enhanced our curriculum and research output. Our graduates have gone on to lead major technology 
+                projects across Africa and beyond, demonstrating the impact of our rigorous academic programs.
+              </p>
+              <div className="flex items-center text-blue-600 font-semibold">
+                <Award size={20} className="mr-2" />
+                <span>Award-Winning Programs</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Modern Era (2020-Present)</h3>
+              <p className="text-gray-700 mb-4">
+                The COVID-19 pandemic accelerated our digital transformation initiatives. We successfully transitioned 
+                to online and hybrid learning models, ensuring continuity of education while maintaining our high standards. 
+                Our new AI Research Center opened in 2023, featuring state-of-the-art equipment for machine learning and 
+                data analytics research.
+              </p>
+              <p className="text-gray-700 mb-4">
+                Today, we continue to innovate with new programs in emerging technologies, enhanced industry collaborations, 
+                and increased focus on solving real-world problems through research and innovation.
+              </p>
+              <div className="flex items-center text-green-600 font-semibold">
+                <Globe size={20} className="mr-2" />
+                <span>Global Impact Through Innovation</span>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-600 to-orange-600 rounded-xl shadow-lg p-8 text-white">
+              <h3 className="text-2xl font-bold mb-4">Our Commitment</h3>
+              <p className="text-white/90 mb-4">
+                As we look toward the future, the Computer Systems & Mathematics Department remains committed to:
+              </p>
+              <ul className="space-y-3 text-white/90">
+                <li className="flex items-start">
+                  <div className="bg-white/20 rounded-full p-1 mr-3 mt-1">
+                    <Users size={16} />
+                  </div>
+                  <span>Developing the next generation of technology leaders</span>
+                </li>
+                <li className="flex items-start">
+                  <div className="bg-white/20 rounded-full p-1 mr-3 mt-1">
+                    <BookOpen size={16} />
+                  </div>
+                  <span>Advancing research in cutting-edge technologies</span>
+                </li>
+                <li className="flex items-start">
+                  <div className="bg-white/20 rounded-full p-1 mr-3 mt-1">
+                    <Target size={16} />
+                  </div>
+                  <span>Solving real-world problems in Tanzania and Africa</span>
+                </li>
+                <li className="flex items-start">
+                  <div className="bg-white/20 rounded-full p-1 mr-3 mt-1">
+                    <Award size={16} />
+                  </div>
+                  <span>Maintaining excellence in teaching and research</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
