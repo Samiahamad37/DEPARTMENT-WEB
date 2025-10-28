@@ -1,13 +1,14 @@
 from django.urls import path
 from .views import (
-    BannerList, BannerDetail, TeamList, TeamDetail, AnnouncementList, AnnouncementDetail,
+    BannerList, BannerDetail, TeamList, TeamDetail,
     ProjectList, ProjectDetail, FeaturedProjectList, ContactMessageCreate, ContactMessageDetail,
     EventList, EventDetail, FeaturedEventList, NewsList, NewsDetail, FeaturedNewsList,
     PartnerList, PartnerDetail, ProgrammeList, ProgrammeDetail, ResearchAreaList, ResearchAreaDetail,
     FacilityList, FacilityDetail, OutreachInitiativeList, OutreachInitiativeDetail,
     DepartmentInfoList, DepartmentInfoDetail, ContactInfoList, ContactInfoDetail,
     SocialMediaList, SocialMediaDetail, DepartmentMilestoneList, DepartmentMilestoneDetail,
-    DepartmentAchievementList, DepartmentAchievementDetail, NewsletterSubscriptionList, NewsletterSubscriptionDetail
+    DepartmentAchievementList, DepartmentAchievementDetail, NewsletterSubscriptionList, NewsletterSubscriptionDetail,
+    SiteSettingsView
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -22,10 +23,6 @@ urlpatterns = [
     # Team URLs
     path('team/', TeamList.as_view(), name='team-list'),
     path('team/<int:pk>/', TeamDetail.as_view(), name='team-detail'),
-    
-    # Announcement URLs
-    path('announcements/', AnnouncementList.as_view(), name='announcement-list'),
-    path('announcements/<int:pk>/', AnnouncementDetail.as_view(), name='announcement-detail'),
     
     # Project URLs
     path('projects/', ProjectList.as_view(), name='project-list'),
@@ -89,6 +86,9 @@ urlpatterns = [
     # Newsletter Subscription URLs
     path('newsletter/', NewsletterSubscriptionList.as_view(), name='newsletter-subscription-list'),
     path('newsletter/<int:pk>/', NewsletterSubscriptionDetail.as_view(), name='newsletter-subscription-detail'),
+    
+    # Site Settings URL (singleton)
+    path('site-settings/', SiteSettingsView.as_view(), name='site-settings'),
     
     # Authentication URLs
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

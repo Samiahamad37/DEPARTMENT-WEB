@@ -5,7 +5,8 @@ from django.contrib.auth.hashers import make_password
 from .models import (
     News, Banner, Team, Project, Programme, ResearchArea, 
     DepartmentInfo, ContactInfo, SocialMedia, DepartmentMilestone, 
-    DepartmentAchievement, NewsletterSubscription, AdminUser, Announcement
+    DepartmentAchievement, NewsletterSubscription, AdminUser,
+    Event, Facility, OutreachInitiative, Partner, SiteSettings
 )
 
 class AdminUserSerializer(serializers.ModelSerializer):
@@ -164,8 +165,39 @@ class AdminNewsletterSubscriptionSerializer(serializers.ModelSerializer):
         model = NewsletterSubscription
         fields = '__all__'
 
-class AdminAnnouncementSerializer(serializers.ModelSerializer):
+class AdminEventSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True, required=False)
+    
     class Meta:
-        model = Announcement
+        model = Event
         fields = '__all__'
+
+class AdminFacilitySerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True, required=False)
+    
+    class Meta:
+        model = Facility
+        fields = '__all__'
+
+class AdminOutreachInitiativeSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True, required=False)
+    
+    class Meta:
+        model = OutreachInitiative
+        fields = '__all__'
+
+class AdminPartnerSerializer(serializers.ModelSerializer):
+    logo = serializers.ImageField(use_url=True, required=False)
+    
+    class Meta:
+        model = Partner
+        fields = '__all__'
+
+class AdminSiteSettingsSerializer(serializers.ModelSerializer):
+    hod_photo = serializers.ImageField(use_url=True, required=False, allow_null=True)
+    
+    class Meta:
+        model = SiteSettings
+        fields = '__all__'
+
 

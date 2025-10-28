@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import timedelta
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+import bleach
 
 # Create your models here.
 
@@ -19,8 +21,11 @@ class Banner(models.Model):
     # New configurable highlight fields
     show_highlights = models.BooleanField(default=False)
     highlight_1_text = models.CharField(max_length=100, blank=True, default="Excellence in Education")
+    highlight_1_icon = models.ImageField(upload_to='banner_icons/', blank=True, null=True, help_text="Icon for highlight 1 (PNG or SVG)")
     highlight_2_text = models.CharField(max_length=100, blank=True, default="Industry Partnerships")
+    highlight_2_icon = models.ImageField(upload_to='banner_icons/', blank=True, null=True, help_text="Icon for highlight 2 (PNG or SVG)")
     highlight_3_text = models.CharField(max_length=100, blank=True, default="Research Impact")
+    highlight_3_icon = models.ImageField(upload_to='banner_icons/', blank=True, null=True, help_text="Icon for highlight 3 (PNG or SVG)")
     overlay_opacity = models.FloatField(default=0.4, help_text="Overlay opacity from 0.0 to 1.0")
 
     class Meta:
@@ -77,11 +82,29 @@ class Team(models.Model):
     title = models.CharField(max_length=200, blank=True, help_text="Official title or designation")
     education = models.TextField(blank=True, help_text="Educational background (JSON format)")
     research_areas = models.TextField(blank=True, help_text="Research areas (JSON format)")
-    publications_count = models.PositiveIntegerField(default=0)
+    publications = models.TextField(blank=True, help_text="Publications with HTML formatting (supports <br> and <a> tags)")
     awards = models.TextField(blank=True, help_text="Awards and recognitions (JSON format)")
 
     class Meta:
         ordering = ['display_order', 'name']
+
+    def clean(self):
+        """Sanitize HTML content in publications field"""
+        if self.publications:
+            # Allow only safe HTML tags: <br>, <a>, <p>, <strong>, <em>
+            allowed_tags = ['br', 'a', 'p', 'strong', 'em']
+            allowed_attributes = {'a': ['href', 'title']}
+            self.publications = bleach.clean(
+                self.publications,
+                tags=allowed_tags,
+                attributes=allowed_attributes,
+                strip=True
+            )
+
+    def save(self, *args, **kwargs):
+        """Save method with HTML sanitization"""
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} - {self.get_role_display()}"
@@ -126,27 +149,6 @@ class Project(models.Model):
     def tag_list(self):
         return [tag.strip() for tag in self.tags.split(',') if tag.strip()]
 
-class Announcement(models.Model):
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    date_posted = models.DateTimeField(auto_now_add=True)
-    is_featured = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ['-date_posted']
-
-    def __str__(self):
-        return self.title
-
-    @property
-    def is_recent(self):
-        return self.date_posted >= timezone.now() - timedelta(days=7)
-
-    @property
-    def is_expired(self):
-        return self.date_posted < timezone.now() - timedelta(days=30)
-
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -163,7 +165,6 @@ class ContactMessage(models.Model):
 
 class News(models.Model):
     CATEGORY_CHOICES = [
-        ('announcement', 'Announcement'),
         ('event', 'Event'),
         ('research', 'Research Update'),
         ('student_achievement', 'Student Achievement'),
@@ -427,3 +428,85 @@ class AdminUser(models.Model):
         if not self.pk:
             self.must_change_password = True
         super().save(*args, **kwargs)
+
+
+class SiteSettings(models.Model):
+    """Model for managing site-wide settings (contact info, footer text, etc.)"""
+    # Contact Information
+    department_name = models.CharField(max_length=200, default="Computer Systems & Mathematics")
+    university_name = models.CharField(max_length=200, default="Ardhi University")
+    physical_address = models.TextField(blank=True)
+    contact_email = models.EmailField(blank=True, help_text="General contact email")
+    contact_phone = models.CharField(max_length=50, blank=True, help_text="General contact phone")
+    contact_fax = models.CharField(max_length=50, blank=True)
+    
+    # Footer Settings
+    footer_caption = models.TextField(
+        blank=True,
+        default="© 2024 CSM Department. All rights reserved.",
+        help_text="Text displayed in footer caption"
+    )
+    footer_bottom_text = models.TextField(
+        blank=True,
+        default="Designed and developed for Computer Systems & Mathematics Department",
+        help_text="Footer bottom text/caption"
+    )
+    
+    # Message from Head of Department
+    hod_message_title = models.CharField(max_length=200, blank=True, default="Welcome Message")
+    hod_message_content = models.TextField(blank=True)
+    hod_photo = models.ImageField(upload_to='hod_photos/', blank=True, null=True)
+    hod_name = models.CharField(max_length=200, blank=True, default="Head of Department")
+    hod_title = models.CharField(max_length=200, blank=True)
+    
+    # SEO and Meta
+    site_description = models.TextField(blank=True)
+    site_keywords = models.CharField(max_length=500, blank=True)
+    
+    class Meta:
+        verbose_name = "Site Settings"
+        verbose_name_plural = "Site Settings"
+    
+    def __str__(self):
+        return "Site Settings"
+    
+    def clean(self):
+        """Sanitize text fields to prevent XSS attacks"""
+        # Sanitize HTML content fields
+        if self.footer_caption:
+            allowed_tags = ['br', 'strong', 'em']
+            self.footer_caption = bleach.clean(
+                self.footer_caption,
+                tags=allowed_tags,
+                strip=True
+            )
+        
+        if self.footer_bottom_text:
+            allowed_tags = ['br', 'strong', 'em']
+            self.footer_bottom_text = bleach.clean(
+                self.footer_bottom_text,
+                tags=allowed_tags,
+                strip=True
+            )
+        
+        if self.hod_message_content:
+            allowed_tags = ['br', 'p', 'strong', 'em', 'a']
+            allowed_attributes = {'a': ['href', 'title']}
+            self.hod_message_content = bleach.clean(
+                self.hod_message_content,
+                tags=allowed_tags,
+                attributes=allowed_attributes,
+                strip=True
+            )
+    
+    def save(self, *args, **kwargs):
+        """Save method with sanitization"""
+        self.clean()
+        # Ensure only one instance exists
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

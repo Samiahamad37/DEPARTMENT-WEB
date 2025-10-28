@@ -8,17 +8,18 @@ from django.db.models import Q
 
 
 from .models import (
-    Banner, Team, Announcement, Project, ContactMessage, Event, News,
+    Banner, Team, Project, ContactMessage, Event, News,
     Partner, Programme, ResearchArea, Facility, OutreachInitiative,
     DepartmentInfo, ContactInfo, SocialMedia, DepartmentMilestone,
-    DepartmentAchievement, NewsletterSubscription
+    DepartmentAchievement, NewsletterSubscription, SiteSettings
 )
 from .serializers import (
-    BannerSerializer, TeamSerializer, AnnouncementSerializer, ProjectSerializer,
+    BannerSerializer, TeamSerializer, ProjectSerializer,
     ContactMessageSerializer, EventSerializer, NewsSerializer, PartnerSerializer,
     ProgrammeSerializer, ResearchAreaSerializer, FacilitySerializer, OutreachInitiativeSerializer,
     DepartmentInfoSerializer, ContactInfoSerializer, SocialMediaSerializer,
-    DepartmentMilestoneSerializer, DepartmentAchievementSerializer, NewsletterSubscriptionSerializer
+    DepartmentMilestoneSerializer, DepartmentAchievementSerializer, NewsletterSubscriptionSerializer,
+    SiteSettingsSerializer
 )
 
 # Banner Views
@@ -42,20 +43,12 @@ class TeamDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = TeamSerializer
     permission_classes = [AllowAny]
 
-# Announcement Views
-class AnnouncementList(generics.ListCreateAPIView):
-    queryset = Announcement.objects.filter(is_active=True)
-    serializer_class = AnnouncementSerializer
 
-class AnnouncementDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Announcement.objects.all()
-    serializer_class = AnnouncementSerializer
 
 # Project Views
 class ProjectList(generics.ListCreateAPIView):
     queryset = Project.objects.filter(is_active=True)
     serializer_class = ProjectSerializer
-    permission_classes = [AllowAny]
 
 class ProjectDetail(RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
@@ -225,4 +218,16 @@ class NewsletterSubscriptionDetail(RetrieveUpdateDestroyAPIView):
     queryset = NewsletterSubscription.objects.all()
     serializer_class = NewsletterSubscriptionSerializer
     permission_classes = [AllowAny]
+
+# Site Settings View
+class SiteSettingsView(generics.RetrieveUpdateAPIView):
+    """
+    Singleton view for site-wide settings.
+    Always returns or creates the single instance (pk=1).
+    """
+    serializer_class = SiteSettingsSerializer
+    permission_classes = [AllowAny]
+    
+    def get_object(self):
+        return SiteSettings.load()
 

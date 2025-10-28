@@ -8,7 +8,8 @@ from django.utils import timezone
 from .models import (
     News, Banner, Team, Project, Programme, ResearchArea, 
     DepartmentInfo, ContactInfo, SocialMedia, DepartmentMilestone, 
-    DepartmentAchievement, NewsletterSubscription, AdminUser, Announcement
+    DepartmentAchievement, NewsletterSubscription, AdminUser,
+    Event, Facility, OutreachInitiative, Partner, SiteSettings
 )
 from .admin_serializers import (
     AdminUserSerializer, CreateAdminUserSerializer, AdminLoginSerializer,
@@ -17,7 +18,9 @@ from .admin_serializers import (
     AdminResearchAreaSerializer, AdminDepartmentInfoSerializer,
     AdminContactInfoSerializer, AdminSocialMediaSerializer,
     AdminDepartmentMilestoneSerializer, AdminDepartmentAchievementSerializer,
-    AdminNewsletterSubscriptionSerializer, AdminAnnouncementSerializer
+    AdminNewsletterSubscriptionSerializer,
+    AdminEventSerializer, AdminFacilitySerializer, AdminOutreachInitiativeSerializer,
+    AdminPartnerSerializer, AdminSiteSettingsSerializer
 )
 
 class IsAdminUser(permissions.BasePermission):
@@ -252,26 +255,70 @@ def admin_dashboard_stats(request):
     """Get dashboard statistics"""
     stats = {
         'news_count': News.objects.count(),
-        'announcements_count': Announcement.objects.count(),
         'banners_count': Banner.objects.count(),
         'team_count': Team.objects.count(),
         'projects_count': Project.objects.count(),
         'programmes_count': Programme.objects.count(),
         'research_areas_count': ResearchArea.objects.count(),
         'newsletter_subscriptions_count': NewsletterSubscription.objects.count(),
+        'events_count': Event.objects.count(),
+        'facilities_count': Facility.objects.count(),
+        'outreach_count': OutreachInitiative.objects.count(),
+        'partners_count': Partner.objects.count(),
     }
     return Response(stats)
 
-# Admin Announcement Views
-class AdminAnnouncementListView(generics.ListCreateAPIView):
-    """Admin view for listing and creating announcements"""
-    queryset = Announcement.objects.all()
-    serializer_class = AdminAnnouncementSerializer
+# Admin Event Views
+class AdminEventListView(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = AdminEventSerializer
     permission_classes = [IsAdminUser]
 
-class AdminAnnouncementDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """Admin view for retrieving, updating and deleting announcements"""
-    queryset = Announcement.objects.all()
-    serializer_class = AdminAnnouncementSerializer
+class AdminEventDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = AdminEventSerializer
     permission_classes = [IsAdminUser]
+
+# Admin Facility Views
+class AdminFacilityListView(generics.ListCreateAPIView):
+    queryset = Facility.objects.all()
+    serializer_class = AdminFacilitySerializer
+    permission_classes = [IsAdminUser]
+
+class AdminFacilityDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Facility.objects.all()
+    serializer_class = AdminFacilitySerializer
+    permission_classes = [IsAdminUser]
+
+# Admin Outreach Initiative Views
+class AdminOutreachInitiativeListView(generics.ListCreateAPIView):
+    queryset = OutreachInitiative.objects.all()
+    serializer_class = AdminOutreachInitiativeSerializer
+    permission_classes = [IsAdminUser]
+
+class AdminOutreachInitiativeDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OutreachInitiative.objects.all()
+    serializer_class = AdminOutreachInitiativeSerializer
+    permission_classes = [IsAdminUser]
+
+# Admin Partner Views
+class AdminPartnerListView(generics.ListCreateAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = AdminPartnerSerializer
+    permission_classes = [IsAdminUser]
+
+class AdminPartnerDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = AdminPartnerSerializer
+    permission_classes = [IsAdminUser]
+
+# Admin Site Settings View (Singleton)
+class AdminSiteSettingsView(generics.RetrieveUpdateAPIView):
+    serializer_class = AdminSiteSettingsSerializer
+    permission_classes = [IsAdminUser]
+    
+    def get_object(self):
+        return SiteSettings.load()
+
+
 

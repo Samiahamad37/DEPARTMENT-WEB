@@ -146,3 +146,5 @@ const DepartmentInfoManagement: React.FC = () => {
 
 export default DepartmentInfoManagement;
 
+
+

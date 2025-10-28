@@ -14,10 +14,7 @@ urlpatterns = [
     
     # Dashboard
     path('dashboard/stats/', admin_views.admin_dashboard_stats, name='admin-dashboard-stats'),
-    
-    # Content Management - Announcements
-    path('content/announcements/', admin_views.AdminAnnouncementListView.as_view(), name='admin-announcement-list'),
-    path('content/announcements/<int:pk>/', admin_views.AdminAnnouncementDetailView.as_view(), name='admin-announcement-detail'),
+
     
     # Content Management - News
     path('content/news/', admin_views.AdminNewsListView.as_view(), name='admin-news-list'),
@@ -66,5 +63,24 @@ urlpatterns = [
     # Content Management - Newsletter Subscriptions
     path('content/newsletter/', admin_views.AdminNewsletterSubscriptionListView.as_view(), name='admin-newsletter-list'),
     path('content/newsletter/<int:pk>/', admin_views.AdminNewsletterSubscriptionDetailView.as_view(), name='admin-newsletter-detail'),
+    
+    # Content Management - Events
+    path('content/events/', admin_views.AdminEventListView.as_view(), name='admin-event-list'),
+    path('content/events/<int:pk>/', admin_views.AdminEventDetailView.as_view(), name='admin-event-detail'),
+    
+    # Content Management - Facilities
+    path('content/facilities/', admin_views.AdminFacilityListView.as_view(), name='admin-facility-list'),
+    path('content/facilities/<int:pk>/', admin_views.AdminFacilityDetailView.as_view(), name='admin-facility-detail'),
+    
+    # Content Management - Outreach Initiatives
+    path('content/outreach/', admin_views.AdminOutreachInitiativeListView.as_view(), name='admin-outreach-list'),
+    path('content/outreach/<int:pk>/', admin_views.AdminOutreachInitiativeDetailView.as_view(), name='admin-outreach-detail'),
+    
+    # Content Management - Partners
+    path('content/partners/', admin_views.AdminPartnerListView.as_view(), name='admin-partner-list'),
+    path('content/partners/<int:pk>/', admin_views.AdminPartnerDetailView.as_view(), name='admin-partner-detail'),
+    
+    # Site Settings (Singleton)
+    path('site-settings/', admin_views.AdminSiteSettingsView.as_view(), name='admin-site-settings'),
 ]
 

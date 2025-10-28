@@ -192,3 +192,5 @@ const ResearchDetails: React.FC = () => {
 
 export default ResearchDetails;
 
+
+

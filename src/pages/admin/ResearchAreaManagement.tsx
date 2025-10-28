@@ -157,3 +157,5 @@ const ResearchAreaManagement: React.FC = () => {
 
 export default ResearchAreaManagement;
 
+
+
